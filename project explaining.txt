@@ -1,0 +1,560 @@
+python analysis 
+
+df = pd.read_csv(...)
+df.head()
+👉 What we do
+
+We load the dataset and preview first few rows.
+
+👉 Why we do this
+
+To understand structure, columns, and sample data before analysis.
+
+👉 How to explain
+
+“First, I loaded the dataset and examined the initial rows to get a basic understanding of the data structure and features involved.”
+
+👉 Impact on project
+Avoids blind analysis
+Helps detect wrong columns early
+Sets foundation for everything
+
+
+2. Data Understanding
+df.columns
+df.info()
+df.isnull().sum()
+👉 What we do
+
+Check columns, data types, and missing values.
+
+👉 Why
+
+Because dirty data = wrong insights
+
+👉 How to explain
+
+“I performed data inspection to understand column types and identify missing values, which is crucial for data cleaning and preprocessing.”
+
+👉 Impact
+Prevents garbage-in-garbage-out
+Ensures model reliability
+
+
+3. Column Cleaning
+df.columns = df.columns.str.strip()
+👉 What
+
+Remove extra spaces from column names
+
+👉 Why
+
+Extra spaces cause errors like:
+
+df['income'] ❌ vs df[' income '] ✔
+👉 How to explain
+
+“I standardized column names to avoid inconsistencies and ensure smooth data handling.”
+
+👉 Impact
+Cleaner code
+Avoids hidden bugs
+
+
+4. Handling Missing Values
+df['rejection_reason'] = df['rejection_reason'].fillna("Not Rejected")
+👉 What
+
+Replace null values
+
+👉 Why
+
+Because missing rejection reason = approved loan
+
+👉 How to explain
+
+“I handled missing values logically by replacing null rejection reasons with ‘Not Rejected’, ensuring consistency in categorical data.”
+
+👉 Impact
+Improves accuracy
+Avoids misinterpretation
+
+
+5. Loan Approval Rate
+df['loan_approval_status'].value_counts(normalize=True) * 100
+👉 What
+
+Calculate % of approved vs rejected loans
+
+👉 Why
+
+This is business KPI
+
+👉 How to explain
+
+“I calculated loan approval rate to understand overall lending performance.”
+
+👉 Impact
+Shows system efficiency
+Helps bank decision-making
+
+
+6. Risk Category vs Approval
+pd.crosstab(df['risk_category'], df['loan_approval_status'])
+👉 What
+Compare risk levels with approval
+👉 Why
+To see if CIBIL/risk score affects approval
+👉 How to explain
+“I analyzed how different risk categories influence loan approval decisions.”
+👉 Impact
+Validates credit policy
+Helps risk modeling
+
+
+7. Previous Default Analysis
+pd.crosstab(df['previous_default'], df['loan_approval_status'])
+👉 What
+Check if past defaults affect apprval
+👉 Why
+Past behavior = future risk
+👉 How to explain
+“I evaluated the impact of previous loan defaults on approval outcomes.”
+👉 Impact
+Helps fraud/risk detection
+Improves decision rules
+
+
+
+8. Debt-to-Income Ratio
+df.groupby('loan_approval_status')['debt_to_income_ratio'].mean()
+👉 What
+Compare average DTI for approved vs rejected
+👉 Why
+DTI = ability to repay
+👉 How to explain
+“I analyzed debt-to-income ratio to assess financial stability of applicants.”
+👉 Impact
+Key feature in loan approval
+Helps model accuracy
+
+
+
+9. EMI-to-Income Ratio
+df.groupby('loan_approval_status')['EMI_to_Income_Ratio'].mean()
+👉 What
+Check EMI burden
+👉 Why
+High EMI = high risk
+👉 How to explain
+“I examined EMI-to-income ratio to evaluate repayment burden.”
+👉 Impact
+Improves risk segmentation
+Better lending decisions
+
+
+
+10. Income vs Loan Amount
+df[['annual_income', 'loan_amount']].corr()
+👉 What
+Correlation between income & loan
+👉 Why
+To check if higher income → higher loan
+👉 How to explain
+“I performed correlation analysis to understand the relationship between applicant income and loan amount.”
+👉 Impact
+Helps detect anomalies
+Useful for model features
+
+
+11. Risk Distribution
+df['risk_category'].value_counts()
+👉 What
+Count risk categories
+👉 Why
+To understand customer profile
+👉 How to explain
+“I analyzed distribution of risk categories to understand applicant segmentation.”
+👉 Impact
+Helps business targeting
+Portfolio risk understanding
+
+
+12. Rejection Reasons
+df[df['loan_approval_status'] == 'Rejected']['rejection_reason'].value_counts()
+👉 What
+Why loans are rejected
+👉 Why
+This is gold insight for business
+👉 How to explain
+“I identified major reasons for loan rejection to improve approval strategies.”
+👉 Impact
+Helps improve approval rate
+Reduces unnecessary rejections
+
+
+🔹 13. Bank Behavior
+pd.crosstab(df['lender_type'], df['loan_approval_status'])
+👉 What
+Compare banks vs NBFCs
+👉 Why
+Different lenders have different policies
+👉 How to explain
+“I compared loan approval behavior across different lender types.”
+👉 Impact
+Competitive analysis
+Strategy building
+
+
+🔹 14. Save Clean Data
+df.to_csv("final_loan_data.csv", index=False)
+👉 What
+Save processed dataset
+👉 Why
+To use in:
+Dashboard
+ML model
+Django app
+👉 How to explain
+“I exported the cleaned dataset for further use in model building and dashboard visualization.”
+👉 Impact
+Enables next pipeline step
+Production-ready data
+🔥 Final One-Line Summary (Use in Interview)
+
+“Basically, I performed data cleaning, exploratory data analysis, and business-driven feature evaluation to understand key factors influencing loan approval, which directly supports risk assessment and decision-making in the lending system.”
+
+
+
+Power BI explaintion
+
+“Using Power BI, I created multiple analytical views to understand loan approval patterns, customer risk profiles, and financial behavior. The dashboard consolidates these insights into a decision-support system for lenders.”
+
+📊 SHEET 1: Loan Approval Overview
+👉 What it shows
+Approved vs Rejected loans
+Percentage distribution
+👉 Why we created it
+
+To understand overall performance of loan system
+
+👉 How to explain
+
+“This sheet gives a high-level view of loan approval rates, helping stakeholders quickly assess lending efficiency.”
+
+👉 Business Insight
+If approvals are too low → strict policy
+If too high → risk of bad loans
+👉 Impact
+
+👉 Helps management adjust approval strategy
+
+📊 SHEET 2: Risk Category Analysis
+👉 What it shows
+Risk categories (Low / Medium / High)
+Their approval/rejection distribution
+👉 Why
+
+To check if risk scoring is actually being followed
+
+👉 How to explain
+
+“This sheet analyzes how risk categories influence loan decisions, ensuring that high-risk applicants are appropriately filtered.”
+
+👉 Business Insight
+High-risk → mostly rejected ✔️ (good system)
+If approved → risky lending ⚠️
+👉 Impact
+
+👉 Validates credit risk model
+
+📊 SHEET 3: Financial Behavior (Income, EMI, DTI)
+👉 What it shows
+Income vs Loan
+EMI-to-Income Ratio
+Debt-to-Income Ratio
+👉 Why
+
+To understand repayment capacity
+
+👉 How to explain
+
+“This sheet focuses on applicants’ financial health by analyzing income levels and repayment burden ratios.”
+
+👉 Business Insight
+High DTI → rejection likely
+High EMI burden → risky customer
+👉 Impact
+
+👉 Helps in better loan eligibility rules
+
+📊 SHEET 4: Rejection Reasons Analysis
+👉 What it shows
+Top reasons for loan rejection
+(low income, high debt, poor credit score, etc.)
+👉 Why
+
+This is pure gold for business improvement
+
+👉 How to explain
+
+“This sheet identifies key rejection reasons, enabling lenders to refine policies and improve customer approval rates.”
+
+👉 Business Insight
+Most rejections due to X → fix policy or targeting
+👉 Impact
+
+👉 Direct business improvement lever
+
+📊 DASHBOARD (MAIN SCREEN)
+
+This is your CEO view — 5 second understanding
+
+👉 What it contains
+KPIs (Total Applications, Approval Rate, Avg Income, etc.)
+Charts from all sheets combined
+Filters (risk, income, lender type)
+👉 How to explain (IMPORTANT 🔥)
+
+“This dashboard provides a consolidated view of loan performance, integrating approval trends, risk segmentation, and financial metrics, allowing decision-makers to interactively explore key drivers of loan approval.”
+
+👉 How to speak while showing dashboard
+
+👉 Start top → bottom:
+
+KPIs
+“At the top, we have key metrics like total applications and approval rate for quick performance tracking.”
+Approval Chart
+“This shows the distribution of approved vs rejected loans.”
+Risk Analysis
+“Here we analyze how risk category impacts approval decisions.”
+Financial Metrics
+“This section evaluates applicant financial strength using income and debt ratios.”
+Filters
+“Users can dynamically filter data based on risk category, income level, or lender type.”
+👉 Final Business Value
+
+👉 Say this line confidently:
+
+“This dashboard transforms raw loan data into actionable insights, enabling data-driven decision-making in credit risk assessment and improving overall lending efficiency.”
+
+🎯 Interview Killer Closing Line
+
+“Overall, the project bridges data analysis with business strategy by identifying key factors influencing loan approval and providing a scalable dashboard for real-time decision support.”
+
+
+
+
+SQL 
+
+1. Database Setup
+create database projectdb;
+use projectdb;
+select * from loan_data;
+👉 What we do
+Create database
+Select it
+View full table
+👉 Why
+
+To initialize environment and verify data is loaded
+
+👉 How to explain
+
+“I first created and selected the database, then verified the dataset by querying all records.”
+
+👉 Impact
+Ensures correct setup
+Avoids working on wrong data
+📊 2. Loan Approval Status Distribution
+select loan_approval_status, count(*) as total
+from loan_data
+group by loan_approval_status;
+👉 What
+
+Counts Approved vs Rejected loans
+
+👉 Why
+
+To understand overall system performance
+
+👉 How to explain
+
+“I calculated the distribution of loan approval statuses to evaluate overall approval trends.”
+
+👉 Insight
+Approval rate vs rejection rate
+👉 Impact
+
+👉 Helps bank balance risk vs growth
+
+📊 3. CIBIL Score → Risk Category → Approval
+SELECT 
+    Risk_Category,
+    loan_approval_status,
+    COUNT(*) AS total
+FROM (
+    SELECT 
+        CASE 
+            WHEN CIBIL_Score >= 750 THEN 'Low Risk'
+            WHEN CIBIL_Score >= 650 THEN 'Medium Risk'
+            ELSE 'High Risk'
+        END AS Risk_Category,
+        loan_approval_status
+    FROM loan_data
+) AS sub
+GROUP BY Risk_Category, loan_approval_status;
+👉 What
+Converts CIBIL score into categories
+Then checks approval per category
+👉 Why
+
+Raw score is messy → categories = better decision making
+
+👉 How to explain
+
+“I derived risk categories using CIBIL score thresholds and analyzed how each category impacts loan approval.”
+
+👉 Insight
+Low Risk → mostly approved
+High Risk → mostly rejected
+👉 Impact
+
+👉 Validates credit policy logic
+👉 Core for risk-based lending system
+
+📊 4. Previous Default vs Approval
+SELECT Previous_Default, loan_approval_status, COUNT(*) 
+FROM loan_data
+GROUP BY Previous_Default, loan_approval_status;
+👉 What
+
+Checks if past defaulters get loans
+
+👉 Why
+
+Past behavior predicts future
+
+👉 How to explain
+
+“I evaluated how previous loan defaults influence current approval decisions.”
+
+👉 Insight
+Default = high rejection
+👉 Impact
+
+👉 Strengthens fraud & risk detection
+
+📊 5. Average Income vs Loan Amount
+SELECT 
+    AVG(annual_Income) AS avg_income,
+    AVG(Loan_Amount) AS avg_loan
+FROM loan_data;
+👉 What
+
+Calculates average income & loan
+
+👉 Why
+
+To understand loan sizing strategy
+
+👉 How to explain
+
+“I calculated average income and loan amount to analyze whether lending aligns with customer earning capacity.”
+
+👉 Insight
+If loan >> income → risky
+👉 Impact
+
+👉 Helps define loan eligibility rules
+
+📊 6. Rejection Reasons Analysis
+SELECT Rejection_Reason, COUNT(*) 
+FROM loan_data
+WHERE Loan_Approval_Status = 'Rejected'
+GROUP BY Rejection_Reason
+ORDER BY COUNT(*) DESC;
+👉 What
+
+Counts why loans are rejected
+
+👉 Why
+
+This is business gold insight
+
+👉 How to explain
+
+“I identified the most common rejection reasons to understand key barriers in loan approval.”
+
+👉 Insight
+Top reasons (low income, high debt, etc.)
+👉 Impact
+
+👉 Improves approval strategy
+👉 Reduces unnecessary rejections
+
+📊 7. Lender Type vs Approval
+SELECT Lender_Type, Loan_approval_Status, COUNT(*) 
+FROM loan_data
+GROUP BY Lender_Type, Loan_approval_Status;
+👉 What
+
+Compares Banks vs NBFCs
+
+👉 Why
+
+Different lenders → different risk appetite
+
+👉 How to explain
+
+“I compared loan approval patterns across different lender types to analyze institutional behavior.”
+
+👉 Insight
+NBFC → more flexible
+Banks → stricter
+👉 Impact
+
+👉 Competitive analysis
+👉 Strategic positioning
+
+📊 8. Loan-to-Income Ratio (LTI)
+SELECT *,
+       (Loan_Amount / annual_Income) AS LTI
+FROM loan_data;
+👉 What
+
+Creates new metric: Loan / Income
+
+👉 Why
+
+Measures loan burden
+
+👉 How to explain
+
+“I derived the Loan-to-Income ratio to evaluate how much loan is being issued relative to applicant income.”
+
+👉 Insight
+High LTI → risky
+Low LTI → safe
+👉 Impact
+
+👉 Critical feature for ML model
+👉 Improves risk scoring
+
+🔁 9. Final Data Check
+select * from loan_data;
+👉 What
+
+Recheck dataset
+
+👉 Why
+
+To confirm transformations
+
+👉 Impact
+Final validation step
+
+
+“This SQL analysis focuses on extracting key business insights such as approval trends, risk segmentation using CIBIL score, impact of previous defaults, financial ratios, and lender behavior. These queries support data-driven decision-making in loan approval and risk assessment.”
+
+
